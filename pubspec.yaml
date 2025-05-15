@@ -10,12 +10,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: # Add this for internationalization
+    sdk: flutter
+  intl: 0.19.0 # Add this for internationalization
+  provider: ^6.1.1 # Add this for state management
   audioplayers: ^5.2.1
   confetti: ^0.7.0
   image_picker: ^1.0.4
   cupertino_icons: ^1.0.8
   scratcher: ^2.0.0
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.3
+  
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +29,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
 
 flutter:
+  generate: true # Add this for i18n generation
   uses-material-design: true
   assets:
     - assets/images/boy_avatar.png
@@ -35,6 +41,8 @@ flutter:
     - assets/sounds/click.mp3
     - assets/sounds/success.mp3
     - assets/sounds/fail.mp3
+    - assets/words/en_words.json
+    - assets/words/ar_words.json
 
 flutter_icons:
   android: true

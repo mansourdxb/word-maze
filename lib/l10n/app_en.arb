@@ -1,0 +1,245 @@
+{
+  "@@locale": "en",
+  "appTitle": "Word Maze",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "tagline": "Challenge Your Vocabulary",
+  "@tagline": {
+    "description": "The tagline under the app title"
+  },
+  "gameMode": "Game Mode",
+  "@gameMode": {
+    "description": "Game mode selection title"
+  },
+  "difficultyLevel": "Difficulty Level",
+  "@difficultyLevel": {
+    "description": "Difficulty level selection title"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selection title"
+  },
+  "startGame": "Start Game",
+  "@startGame": {
+    "description": "Start game button text"
+  },
+  "soloAdventure": "Solo Adventure",
+  "@soloAdventure": {
+    "description": "Solo game mode option"
+  },
+  "versusPlayers": "Play against Friends & AI",
+  "@versusPlayers": {
+    "description": "Versus players game mode option"
+  },
+  "versusAI": "Battle AI Bot",
+  "@versusAI": {
+    "description": "Versus AI game mode option"
+  },
+  "easy": "Easy",
+  "@easy": {
+    "description": "Easy difficulty"
+  },
+  "medium": "Medium",
+  "@medium": {
+    "description": "Medium difficulty"
+  },
+  "hard": "Hard",
+  "@hard": {
+    "description": "Hard difficulty"
+  },
+  "easyDescription": "Perfect for beginners",
+  "@easyDescription": {
+    "description": "Description for easy difficulty"
+  },
+  "mediumDescription": "Challenge your skills",
+  "@mediumDescription": {
+    "description": "Description for medium difficulty"
+  },
+  "hardDescription": "For word masters only",
+  "@hardDescription": {
+    "description": "Description for hard difficulty"
+  },
+  "player1": "Player 1",
+  "@player1": {
+    "description": "Label for player 1"
+  },
+  "player2": "Player 2",
+  "@player2": {
+    "description": "Label for player 2"
+  },
+  "selectAvatar": "Select Avatar",
+  "@selectAvatar": {
+    "description": "Prompt to select avatar"
+  },
+  "continueButton": "Continue", 
+"@continueButton": {
+  "description": "Continue button text"
+},
+  "timeLeft": "Time Left",
+  "@timeLeft": {
+    "description": "Time left label"
+  },
+  "selectedLetters": "Selected Letters",
+  "@selectedLetters": {
+    "description": "Selected letters label"
+  },
+  "playAgain": "Play Again",
+  "@playAgain": {
+    "description": "Play again button text"
+  },
+  "backToHome": "Back to Home",
+  "@backToHome": {
+    "description": "Back to home button text"
+  },
+  "timesUp": "Time's Up!",
+  "@timesUp": {
+    "description": "Time's up message"
+  },
+  "pts": "pts",
+  "@pts": {
+    "description": "Points abbreviation"
+  },
+  "words": "words",
+  "@words": {
+    "description": "Words label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "arabic": "العربية",
+  "@arabic": {
+    "description": "Arabic language name"
+  },
+    "guest": "Guest",
+  "@guest": {
+    "description": "Guest player name"
+  },
+  "enterName": "Enter your name",
+  "@enterName": {
+    "description": "Prompt for name entry"
+  },
+  "nextPlayer": "Next Player",
+  "@nextPlayer": {
+    "description": "Next player button text"
+  },
+  "continueAsGuest": "Continue as Guest",
+  "@continueAsGuest": {
+    "description": "Button to continue as guest"
+  },
+  "pleaseEnterNameAvatar": "Please enter your name and select an avatar",
+  "@pleaseEnterNameAvatar": {
+    "description": "Error message for incomplete profile"
+  },
+  "playerSetup": "Player Setup",
+  "@playerSetup": {
+    "description": "Player setup screen title"
+  },
+  "player1Setup": "Player 1 Setup",
+  "@player1Setup": {
+    "description": "Player 1 setup screen title"
+  },
+  "player2Setup": "Player 2 Setup",
+  "@player2Setup": {
+    "description": "Player 2 setup screen title"
+  },
+"easy": "Easy",
+"@easy": {
+  "description": "Easy difficulty"
+},
+"medium": "Medium",
+"@medium": {
+  "description": "Medium difficulty"
+},
+"hard": "Hard",
+"@hard": {
+  "description": "Hard difficulty"
+},
+"splashTagline": "Play against Friends & AI",
+"@splashTagline": {
+  "description": "Tagline on splash screen"
+},
+"won": "{name} Won!",
+"@won": {
+  "description": "Winner announcement with player name",
+  "placeholders": {
+    "name": {
+      "type": "String",
+      "example": "Player 1"
+    }
+  }
+},
+"wordsSolved": "Words Solved: {count}",
+"@wordsSolved": {
+  "description": "Words solved counter",
+  "placeholders": {
+    "count": {
+      "type": "int",
+      "example": "5"
+    }
+  }
+},
+"finalScore": "Final Score: {score} pts",
+"@finalScore": {
+  "description": "Final score display",
+  "placeholders": {
+    "score": {
+      "type": "int",
+      "example": "250"
+    }
+  }
+},
+"rematch": "Rematch",
+"@rematch": {
+  "description": "Rematch button text"
+},
+"winner": "Winner!",
+"@winner": {
+  "description": "Winner label"
+},
+"viewHistory": "View History",
+"@viewHistory": {
+  "description": "View history button"
+},
+"gameHistory": "Game History",
+"@gameHistory": {
+  "description": "Game history screen title"
+},
+"noHistoryFound": "No history found.",
+"@noHistoryFound": {
+  "description": "Text shown when history is empty"
+},
+"historyVs": "{player1} vs {player2}",
+"@historyVs": {
+  "description": "Game history entry title format",
+  "placeholders": {
+    "player1": {
+      "type": "String",
+      "example": "Player1"
+    },
+    "player2": {
+      "type": "String",
+      "example": "Player2"
+    }
+  }
+},
+"historyScore": "Score: {score1} - {score2} • Words: {words}",
+"@historyScore": {
+  "description": "Game history entry score format",
+  "placeholders": {
+    "score1": {
+      "type": "String",
+      "example": "150"
+    },
+    "score2": {
+      "type": "String",
+      "example": "100"
+    },
+    "words": {
+      "type": "String",
+      "example": "5"
+    }
+  }
+}
+}

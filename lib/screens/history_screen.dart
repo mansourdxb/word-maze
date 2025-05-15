@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({Key? key}) : super(key: key);
@@ -30,25 +31,62 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Game History'),
-        backgroundColor: Colors.teal,
+    // Get current locale and determine if RTL
+    final currentLocale = Localizations.localeOf(context).languageCode;
+    final isRtl = currentLocale == 'ar';
+    
+    return Directionality(
+      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)?.gameHistory ?? 'Game History'),
+          backgroundColor: Colors.teal,
+        ),
+        body: history.isEmpty
+            ? Center(
+                child: Text(AppLocalizations.of(context)?.noHistoryFound ?? 'No history found.'),
+              )
+            : ListView.builder(
+                itemCount: history.length,
+                itemBuilder: (context, index) {
+                  final game = history[index];
+                  return ListTile(
+                    leading: const Icon(Icons.history),
+                    title: Text(
+                      AppLocalizations.of(context)?.historyVs(
+                            game['player1Name'],
+                            game['player2Name'] ?? AppLocalizations.of(context)?.versusAI ?? 'AI',
+                          ) ??
+                          '${game['player1Name']} vs ${game['player2Name'] ?? 'AI'}',
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)?.historyScore(
+                            game['player1Score'].toString(),
+                            game['player2Score']?.toString() ?? '-',
+                            game['player1Words'].toString(),
+                          ) ??
+                          'Score: ${game['player1Score']} - ${game['player2Score'] ?? '-'} • Words: ${game['player1Words']}',
+                    ),
+                    trailing: Text(
+                      _getLocalizedDifficulty(context, game['difficulty']) ?? game['difficulty'],
+                    ),
+                  );
+                },
+              ),
       ),
-      body: history.isEmpty
-          ? const Center(child: Text('No history found.'))
-          : ListView.builder(
-              itemCount: history.length,
-              itemBuilder: (context, index) {
-                final game = history[index];
-                return ListTile(
-                  leading: const Icon(Icons.history),
-                  title: Text('${game['player1Name']} vs ${game['player2Name'] ?? 'AI'}'),
-                  subtitle: Text('Score: ${game['player1Score']} - ${game['player2Score'] ?? '-'} • Words: ${game['player1Words']}'),
-                  trailing: Text(game['difficulty']),
-                );
-              },
-            ),
     );
+  }
+
+  String? _getLocalizedDifficulty(BuildContext context, String difficulty) {
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
+        return AppLocalizations.of(context)?.easy;
+      case 'medium':
+        return AppLocalizations.of(context)?.medium;
+      case 'hard':
+        return AppLocalizations.of(context)?.hard;
+      default:
+        return difficulty;
+    }
   }
 }

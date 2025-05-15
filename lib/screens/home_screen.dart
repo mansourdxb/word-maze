@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'player_setup_screen.dart';
 import '../models/game_mode.dart';
 import '../models/difficulty.dart';
-import 'game_screen.dart'; // ✅ THIS LINE IS NEEDED!
+import 'game_screen.dart'; 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/locale_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,11 +16,13 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin 
+{
   GameMode _selectedMode = GameMode.solo;
   Difficulty _selectedDifficulty = Difficulty.easy;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  String selectedLanguage = 'en';
 
   @override
   void initState() {
@@ -46,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  void startGame() async {
+  void startGame() async 
+  {
     HapticFeedback.mediumImpact();
 
     final result = await Navigator.push(
@@ -55,22 +62,25 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         builder: (context) => PlayerSetupScreen(
           gameMode: _selectedMode,
           difficulty: _selectedDifficulty,
+          languageCode: selectedLanguage, // Add this
+
         ),
       ),
     );
 
     if (result != null && result is Map<String, dynamic>) {
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => GameScreen(
-            gameMode: _selectedMode,
-            difficulty: _selectedDifficulty,
-            player1Name: result['player1Name'],
-            player1AvatarPath: result['player1AvatarPath'],
-            player2Name: result['player2Name'],
-            player2AvatarPath: result['player2AvatarPath'],
-          ),
+     Navigator.push(
+  context,
+  PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => GameScreen(
+      gameMode: _selectedMode,
+      difficulty: _selectedDifficulty,
+      player1Name: result['player1Name'],
+      player1AvatarPath: result['player1AvatarPath'],
+      player2Name: result['player2Name'],
+      player2AvatarPath: result['player2AvatarPath'],
+      languageCode: selectedLanguage, // Add this line
+    ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;
@@ -84,12 +94,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
-  Widget _buildSelectionCard({
+  Widget _buildSelectionCard
+  (
+    {
     required String title,
     required Widget content,
     required IconData icon,
     required Color iconColor,
-  }) {
+  }
+  ) 
+  {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
@@ -133,11 +147,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildGameModeSelector() {
     return Column(
       children: GameMode.values.map((mode) {
-        final titles = {
-          GameMode.solo: 'Solo Adventure',
-          GameMode.versusPlayer: 'Play against Friends & AI',
-          GameMode.versusAI: 'Battle AI Bot',
-        };
+       final titles = {
+  GameMode.solo: AppLocalizations.of(context)?.soloAdventure ?? 'Solo Adventure',
+  GameMode.versusPlayer: AppLocalizations.of(context)?.versusPlayers ?? 'Play against Friends & AI',
+  GameMode.versusAI: AppLocalizations.of(context)?.versusAI ?? 'Battle AI Bot',
+};
 
         final icons = {
           GameMode.solo: Icons.person,
@@ -204,96 +218,284 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildDifficultySelector() {
-    final difficultyColors = {
-      Difficulty.easy: Colors.green.shade700,
-      Difficulty.medium: Colors.orange.shade700,
-      Difficulty.hard: Colors.red.shade700,
-    };
+Widget _buildDifficultySelector() {
+  final difficultyColors = {
+    Difficulty.easy: Colors.green.shade700,
+    Difficulty.medium: Colors.orange.shade700,
+    Difficulty.hard: Colors.red.shade700,
+  };
 
-    final difficultyDescriptions = {
-      Difficulty.easy: 'Perfect for beginners',
-      Difficulty.medium: 'Challenge your skills',
-      Difficulty.hard: 'For word masters only',
-    };
+  // Use localized names for difficulties
+  final difficultyNames = {
+    Difficulty.easy: AppLocalizations.of(context)?.easy ?? 'Easy',
+    Difficulty.medium: AppLocalizations.of(context)?.medium ?? 'Medium',
+    Difficulty.hard: AppLocalizations.of(context)?.hard ?? 'Hard',
+  };
 
-    return Column(
-      children: Difficulty.values.map((difficulty) {
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedDifficulty = difficulty;
-            });
-            HapticFeedback.lightImpact();
-          },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
+  final difficultyDescriptions = {
+    Difficulty.easy: AppLocalizations.of(context)?.easyDescription ?? 'Perfect for beginners',
+    Difficulty.medium: AppLocalizations.of(context)?.mediumDescription ?? 'Challenge your skills',
+    Difficulty.hard: AppLocalizations.of(context)?.hardDescription ?? 'For word masters only',
+  };
+
+  return Column(
+    children: Difficulty.values.map<Widget>((difficulty) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedDifficulty = difficulty;
+          });
+          HapticFeedback.lightImpact();
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: _selectedDifficulty == difficulty
+                ? (difficultyColors[difficulty] ?? Colors.blue).withOpacity(0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
               color: _selectedDifficulty == difficulty
-                  ? (difficultyColors[difficulty] ?? Colors.blue).withOpacity(0.1)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
+                  ? (difficultyColors[difficulty] ?? Colors.blue)
+                  : Colors.grey.shade300,
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.star,
                 color: _selectedDifficulty == difficulty
                     ? (difficultyColors[difficulty] ?? Colors.blue)
-                    : Colors.grey.shade300,
-                width: 1.5,
+                    : Colors.grey.shade600,
+                size: 24,
               ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.star,
-                  color: _selectedDifficulty == difficulty
-                      ? (difficultyColors[difficulty] ?? Colors.blue)
-                      : Colors.grey.shade600,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    // Use the localized name instead of the enum value
+                    difficultyNames[difficulty] ?? difficulty.toString().split('.').last,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: _selectedDifficulty == difficulty
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: _selectedDifficulty == difficulty
+                          ? (difficultyColors[difficulty] ?? Colors.blue)
+                          : Colors.grey.shade800,
+                    ),
+                  ),
+                  if (_selectedDifficulty == difficulty)
                     Text(
-                      difficulty.toString().split('.').last,
+                      difficultyDescriptions[difficulty] ?? '',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: _selectedDifficulty == difficulty
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: _selectedDifficulty == difficulty
-                            ? (difficultyColors[difficulty] ?? Colors.blue)
-                            : Colors.grey.shade800,
+                        fontSize: 12,
+                        color: difficultyColors[difficulty] ?? Colors.blue,
                       ),
                     ),
-                    if (_selectedDifficulty == difficulty)
-                      Text(
-                        difficultyDescriptions[difficulty] ?? '',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: difficultyColors[difficulty] ?? Colors.blue,
-                        ),
-                      ),
-                  ],
+                ],
+              ),
+              const Spacer(),
+              if (_selectedDifficulty == difficulty)
+                Icon(
+                  Icons.check_circle,
+                  color: difficultyColors[difficulty] ?? Colors.blue,
+                  size: 20,
                 ),
-                const Spacer(),
-                if (_selectedDifficulty == difficulty)
-                  Icon(
-                    Icons.check_circle,
-                    color: difficultyColors[difficulty] ?? Colors.blue,
-                    size: 20,
-                  ),
-              ],
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
+Widget _buildLanguageSelector() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          AppLocalizations.of(context)?.language ?? 'Language:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.teal.shade800,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.teal.shade300),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: selectedLanguage,
+              isDense: true,
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.teal),
+           onChanged: (String? newValue) async {
+  if (newValue != null) {
+    setState(() {
+      selectedLanguage = newValue;
+    });
+    
+    // Debug print
+    print('Setting locale to: $newValue');
+    
+    try {
+      // First, save the preference so it persists even if app restarts
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('language', newValue);
+      
+      // Update the app's locale using the LocaleProvider
+      final provider = Provider.of<LocaleProvider>(context, listen: false);
+      provider.setLocale(Locale(newValue));
+      
+      // Force UI to rebuild with new locale by showing a loading dialog briefly
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
             ),
           ),
         );
-      }).toList(),
-    );
+        
+        // Small delay to allow locale change to propagate through the widget tree
+        await Future.delayed(const Duration(milliseconds: 300));
+        
+        // Close dialog if context is still mounted
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          
+          // Give user feedback about language change
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                newValue == 'ar' 
+                  ? 'تم تغيير اللغة إلى العربية' 
+                  : 'Language changed to English'
+              ),
+              duration: const Duration(seconds: 2),
+              backgroundColor: Colors.teal,
+            ),
+          );
+        }
+      }
+      
+      // Final debug print to confirm change
+      print('Language successfully changed to: $newValue');
+      
+    } catch (e) {
+      // Handle any errors
+      print('Error changing language: $e');
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error changing language: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
+},
+              items: [
+                DropdownMenuItem<String>(
+                  value: 'en',
+                  child: Text(AppLocalizations.of(context)?.english ?? 'English'),
+                ),
+                DropdownMenuItem<String>(
+                  value: 'ar',
+                  child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+Widget _buildLanguageOption(String code, String name, IconData icon) {
+  final isSelected = selectedLanguage == code;
+  
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Material(
+      color: isSelected ? const Color(0xFF3F51B5).withOpacity(0.1) : Colors.transparent,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          setState(() {
+            selectedLanguage = code;
+          });
+          HapticFeedback.lightImpact();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? const Color(0xFF3F51B5) : Colors.grey.shade300,
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? const Color(0xFF3F51B5) : Colors.grey.shade600,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                name,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? const Color(0xFF3F51B5) : Colors.grey.shade800,
+                ),
+              ),
+              const Spacer(),
+              if (isSelected)
+                const Icon(
+                  Icons.check_circle,
+                  color: Color(0xFF3F51B5),
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+ @override
+Widget build(BuildContext context) {
+  // Get current locale and determine if RTL
+  final currentLocale = Localizations.localeOf(context).languageCode;
+  final isRtl = currentLocale == 'ar';
+  
+  // For debugging
+  print('HomeScreen building with locale: $currentLocale, is RTL: $isRtl');
+
+  return Directionality(
+    // Set text direction based on language
+    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+    child: Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -339,9 +541,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Word Maze',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)?.appTitle ?? 'Word Maze',
+                      style: const TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF195B5B),
@@ -355,9 +557,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ],
                       ),
                     ),
-                    const Text(
-                      'Challenge Your Vocabulary',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)?.tagline ?? 'Challenge Your Vocabulary',
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFF195B5B),
                         fontStyle: FontStyle.italic,
@@ -365,16 +567,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(height: 40),
                     _buildSelectionCard(
-                      title: 'Game Mode',
+                      title: AppLocalizations.of(context)?.gameMode ?? 'Game Mode',
                       content: _buildGameModeSelector(),
                       icon: Icons.sports_esports,
                       iconColor: const Color(0xFF009688),
                     ),
                     _buildSelectionCard(
-                      title: 'Difficulty Level',
+                      title: AppLocalizations.of(context)?.difficultyLevel ?? 'Difficulty Level',
                       content: _buildDifficultySelector(),
                       icon: Icons.speed,
                       iconColor: const Color(0xFFF57C00),
+                    ),
+                    _buildSelectionCard(
+                      title: AppLocalizations.of(context)?.language ?? 'Language',
+                      content: _buildLanguageSelector(),
+                      icon: Icons.language,
+                      iconColor: const Color(0xFF3F51B5),
                     ),
                     const SizedBox(height: 30),
                     Container(
@@ -402,19 +610,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ),
                           elevation: 0,
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Start Game',
-                              style: TextStyle(
+                              AppLocalizations.of(context)?.startGame ?? 'Start Game',
+                              style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.0,
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Icon(Icons.play_arrow, size: 28),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.play_arrow, size: 28),
                           ],
                         ),
                       ),
@@ -426,6 +634,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -45,9 +46,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  // Get current locale and determine if RTL
+  final currentLocale = Localizations.localeOf(context).languageCode;
+  final isRtl = currentLocale == 'ar';
+  
+  return Directionality(
+    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+    child: Scaffold(
       backgroundColor: const Color(0xFFE0F7FA),
       body: Center(
         child: ScaleTransition(
@@ -61,9 +68,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 height: 180,
               ),
               const SizedBox(height: 20),
-              const Text(
-                "Word Maze",
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)?.appTitle ?? "Word Maze",
+                style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF195B5B),
@@ -71,9 +78,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                "Play aginst Friends & AI",
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)?.splashTagline ?? "Play against Friends & AI",
+                style: const TextStyle(
                   fontSize: 16,
                   color: Color(0xFF195B5B),
                   fontStyle: FontStyle.italic,
@@ -83,6 +90,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

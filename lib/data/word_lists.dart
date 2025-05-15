@@ -1,49 +1,49 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
 class WordLists {
-  static const List<String> easyWords = [
-    "CAT", "DOG", "CAR", "SUN", "BALL", "FISH", "TREE", "MILK", "BOOK", "STAR",
-    "HAT", "PEN", "MOON", "DUCK", "CAKE", "SHIP", "BIRD", "FAN", "CUP", "LAMP",
-    "RAIN", "KEY", "SAND", "FROG", "COW", "BAG", "BED", "TOY", "BUS", "MAP",
-    "APPLE", "ORANGE", "CHAIR", "DOOR", "FIRE", "WATER", "SALT", "BREAD", "HAND",
-    "NOSE", "EAR", "FOOT", "EGG", "BONE", "WIND", "ROAD", "WALL", "COIN", "BELL",
-    "SOAP", "FORK", "MUG", "NEST", "GRASS", "WOOD", "LEAF", "PIE", "SNOW", "BEE",
-    "MILK", "JAM", "SEED", "CORN", "RING", "TIRE", "FLAG", "MOLE", "CANE", "TAPE",
-    "CLOUD", "BULB", "BUSH", "ROOF", "NUT", "FAN", "CUP", "INK", "PIG", "FOX",
-    "WEB", "RUBY", "TUNA", "PEAR", "VAN", "ROCK", "HILL", "POND", "GOLD", "SILK",
-    "CLAY", "RUG", "WAX", "SOCK", "COOK", "SINK", "POND", "LOG"
-  ];
+  // Using static to ensure we have a single instance
+  static final WordLists _instance = WordLists._internal();
+  factory WordLists() => _instance;
+  WordLists._internal();
 
-  static const List<String> mediumWords = [
-    "SCHOOL", "GARDEN", "WINDOW", "MOUNTAIN", "DOCTOR", "FAMILY", "BRIDGE", "CANDLE",
-    "JUNGLE", "SINGER", "PLANET", "BUTTON", "RIVER", "KITCHEN", "BOTTLE", "FURNACE",
-    "PRINTER", "MARKET", "NATURE", "LIBRARY", "FATHER", "MOTHER", "KITTEN", "BANANA",
-    "CASTLE", "FURNITURE", "GIRAFFE", "HAMMER", "ISLAND", "LADDER", "MONKEY", "NEEDLE",
-    "OCEAN", "PEANUT", "QUARRY", "ROCKET", "SHELTER", "TUNNEL", "UMPIRE", "VILLAGE",
-    "WAGON", "YACHT", "ZEBRA", "ANCHOR", "BALCONY", "CANTEEN", "DOLPHIN", "ENVELOPE",
-    "FACTORY", "GUITAR", "HARBOR", "ICEBERG", "JOURNAL", "KINGDOM", "LANTERN", "MIRROR",
-    "NECKLACE", "OCTOPUS", "PYRAMID", "QUARTER", "RACCOON", "SADDLE", "TEMPLE", "URCHIN",
-    "VULTURE", "WALRUS", "YARD", "ZIPPER", "BALLOON", "CABBAGE", "DESSERT", "EAGLE",
-    "FOSSIL", "GOBLIN", "HUNTER", "INVITE", "JUNGLE", "KETTLE", "LIZARD", "MOSAIC",
-    "NOVEL", "OSTRICH", "POETRY", "QUILT", "RAFFLE", "SAILOR", "TROPHY", "UMPIRE",
-    "VACCINE", "WRESTLE", "YAWN", "ZUCCHINI"
-  ];
+  // Initialize with empty maps to avoid null errors
+  final Map<String, List<String>> easy = {};
+  final Map<String, List<String>> medium = {};
+  final Map<String, List<String>> hard = {};
+  
+  // Track which languages have been loaded
+  final Set<String> loadedLanguages = {};
 
-  static const List<String> hardWords = [
-    "COMPUTER", "PHILOSOPHY", "CELEBRATION", "ARCHITECTURE", "DISCOVERY", "ADVENTURE",
-    "TELEVISION", "MOTIVATION", "DICTIONARY", "EXPERIENCE", "CULTIVATION", "ASTRONOMY",
-    "EDUCATION", "RESTAURANT", "CONSTRUCTION", "APPLICATION", "MATHEMATICS", "ELECTRICITY",
-    "COMMUNICATION", "UNDERSTANDING", "DETERMINATION", "INTERNATIONAL", "TECHNOLOGY",
-    "PHOTOGRAPHY", "PSYCHOLOGY", "RECOGNITION", "ENVIRONMENT", "DEVELOPMENT", "ENTERTAINMENT",
-    "ACCOUNTABILITY", "ADVERTISEMENT", "CHARACTERISTICS", "RESPONSIBILITY", "TRANSFORMATION",
-    "CONVERSATION", "AGRICULTURE", "INFORMATION", "KNOWLEDGE", "MANAGEMENT", "ORGANIZATION",
-    "RESERVATION", "REVOLUTION", "SATISFACTION", "STATISTICS", "SUBSCRIPTION", "TRADITION",
-    "TRANSPORTATION", "ASSUMPTION", "BENEFICIARY", "CERTIFICATION", "CONSEQUENCE",
-    "DECLARATION", "EDUCATIONAL", "EVALUATION", "FOUNDATION", "HESITATION", "IMAGINATION",
-    "INSTITUTION", "PREDICTION", "PRESENTATION", "PRESERVATION", "RECOMMENDATION",
-    "REPRESENTATION", "SENSITIVITY", "SPECIALIZATION", "STANDARDIZATION", "SUPPLEMENTATION",
-    "UNDERSTANDING", "VACCINATION", "ACCOMMODATION", "ADJUSTMENT", "APPRECIATION",
-    "ATTACHMENT", "ATTRACTION", "CONSOLIDATION", "CONTEMPLATION", "DETERMINATION",
-    "DISCRIMINATION", "EXPERIMENTATION", "IMPLEMENTATION", "INTERPRETATION", "MANIPULATION",
-    "OBSERVATION", "PARTICIPATION", "REHABILITATION", "SPECIFICATION", "STANDARDIZATION",
-    "SUGGESTION", "TOLERATION", "VALIDATION", "VINDICATION"
-  ];
+  Future<void> load(String languageCode) async {
+    // Skip if already loaded
+    if (loadedLanguages.contains(languageCode)) {
+      print('Words for $languageCode already loaded');
+      return;
+    }
+
+    try {
+      final path = 'assets/words/${languageCode}_words.json';
+      print('Loading words from $path');
+      
+      final data = await rootBundle.loadString(path);
+      final jsonData = json.decode(data);
+
+      // Add to existing maps instead of replacing them
+      easy[languageCode] = List<String>.from(jsonData['easy']);
+      medium[languageCode] = List<String>.from(jsonData['medium']);
+      hard[languageCode] = List<String>.from(jsonData['hard']);
+      
+      // Mark as loaded
+      loadedLanguages.add(languageCode);
+      
+      print('Successfully loaded ${easy[languageCode]?.length ?? 0} easy words for $languageCode');
+    } catch (e) {
+      print('Error loading words for $languageCode: $e');
+      // Create empty lists for this language to avoid null errors
+      easy[languageCode] = [];
+      medium[languageCode] = [];
+      hard[languageCode] = [];
+    }
+  }
 }

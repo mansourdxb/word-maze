@@ -6,6 +6,7 @@ import 'game_screen.dart';
 import 'history_screen.dart'; // <-- new import
 import '../models/game_mode.dart';
 import '../models/difficulty.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultScreen extends StatefulWidget {
   final String player1Name;
@@ -88,12 +89,18 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
     return path.startsWith('assets/') ? AssetImage(path) : FileImage(File(path));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    bool versus = widget.player2Name != null && widget.player2AvatarPath != null;
-    bool player1Won = !versus || (widget.player1Score >= (widget.player2Score ?? 0));
+@override
+Widget build(BuildContext context) {
+  bool versus = widget.player2Name != null && widget.player2AvatarPath != null;
+  bool player1Won = !versus || (widget.player1Score >= (widget.player2Score ?? 0));
 
-    return Scaffold(
+  // Get current locale and determine if RTL
+  final currentLocale = Localizations.localeOf(context).languageCode;
+  final isRtl = currentLocale == 'ar';
+
+  return Directionality(
+    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+    child: Scaffold(
       backgroundColor: const Color(0xFFE0F7FA),
       body: SafeArea(
         child: Center(
@@ -113,7 +120,7 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                 const SizedBox(height: 20),
                 if (!versus)
                   Text(
-                    '${widget.player1Name} Won!',
+                    AppLocalizations.of(context)?.won(widget.player1Name) ?? '${widget.player1Name} Won!',
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -133,7 +140,7 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                         isWinner: player1Won,
                       ),
                       _buildPlayerBox(
-                        name: widget.player2Name ?? 'Friend',
+                        name: widget.player2Name ?? AppLocalizations.of(context)?.player2 ?? 'Friend',
                         avatarPath: widget.player2AvatarPath ?? 'assets/images/boy_avatar.png',
                         score: widget.player2Score ?? 0,
                         words: widget.player2Words ?? 0,
@@ -151,12 +158,12 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Words Solved: ${widget.player1Words}',
+                      AppLocalizations.of(context)?.wordsSolved(widget.player1Words) ?? 'Words Solved: ${widget.player1Words}',
                       style: const TextStyle(fontSize: 22, color: Colors.teal, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Final Score: ${widget.player1Score} pts',
+                      AppLocalizations.of(context)?.finalScore(widget.player1Score) ?? 'Final Score: ${widget.player1Score} pts',
                       style: const TextStyle(fontSize: 22, color: Colors.deepOrange, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -173,6 +180,7 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                           player1AvatarPath: widget.player1AvatarPath,
                           player2Name: widget.player2Name,
                           player2AvatarPath: widget.player2AvatarPath,
+                          languageCode: currentLocale, // Make sure to pass the language!
                         ),
                       ),
                     );
@@ -186,14 +194,14 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                     ),
                     elevation: 6,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.refresh, size: 26),
-                      SizedBox(width: 10),
+                      const Icon(Icons.refresh, size: 26),
+                      const SizedBox(width: 10),
                       Text(
-                        'Rematch',
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        AppLocalizations.of(context)?.rematch ?? 'Rematch',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -201,69 +209,81 @@ class _ResultScreenState extends State<ResultScreen> with SingleTickerProviderSt
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                  child: const Text('Back to Home', style: TextStyle(fontSize: 16, color: Colors.teal)),
+                  child: Text(
+                    AppLocalizations.of(context)?.backToHome ?? 'Back to Home', 
+                    style: const TextStyle(fontSize: 16, color: Colors.teal)
+                  ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const HistoryScreen()),
                   ),
-                  child: const Text('View History', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  child: Text(
+                    AppLocalizations.of(context)?.viewHistory ?? 'View History', 
+                    style: const TextStyle(fontSize: 16, color: Colors.blue)
+                  ),
                 )
               ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildPlayerBox({required String name, required String avatarPath, required int score, required int words, required bool isWinner}) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: isWinner ? Colors.amber : Colors.grey.shade400, width: 4),
-          ),
-          child: CircleAvatar(
-            radius: 35,
-            backgroundImage: _getAvatar(avatarPath),
-            backgroundColor: Colors.white,
+Widget _buildPlayerBox({required String name, required String avatarPath, required int score, required int words, required bool isWinner}) {
+  return Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: isWinner ? Colors.amber : Colors.grey.shade400, width: 4),
+        ),
+        child: CircleAvatar(
+          radius: 35,
+          backgroundImage: _getAvatar(avatarPath),
+          backgroundColor: Colors.white,
+        ),
+      ),
+      const SizedBox(height: 8),
+      Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.star, color: Colors.yellow.shade800, size: 18),
+          const SizedBox(width: 4),
+          Text('$score ${AppLocalizations.of(context)?.pts ?? "pts"}'),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.text_snippet, color: Colors.deepPurple, size: 18),
+          const SizedBox(width: 4),
+          Text('$words ${AppLocalizations.of(context)?.words ?? "words"}'),
+        ],
+      ),
+      if (isWinner)
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.emoji_events, color: Colors.amber, size: 20),
+              const SizedBox(width: 4),
+              Text(
+                AppLocalizations.of(context)?.winner ?? 'Winner!', 
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber)
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.star, color: Colors.yellow.shade800, size: 18),
-            const SizedBox(width: 4),
-            Text('$score pts'),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.text_snippet, color: Colors.deepPurple, size: 18),
-            const SizedBox(width: 4),
-            Text('$words words'),
-          ],
-        ),
-        if (isWinner)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.emoji_events, color: Colors.amber, size: 20),
-                SizedBox(width: 4),
-                Text('Winner!', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber)),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
+    ],
+  );
+}
+
+ 
 }

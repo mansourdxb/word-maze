@@ -6,12 +6,20 @@ import 'package:image_picker/image_picker.dart';
 import 'game_screen.dart';
 import '../models/game_mode.dart';
 import '../models/difficulty.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlayerSetupScreen extends StatefulWidget {
   final GameMode gameMode;
   final Difficulty difficulty;
+  final String languageCode; // Add this
 
-  const PlayerSetupScreen({Key? key, required this.gameMode, required this.difficulty}) : super(key: key);
+
+   const PlayerSetupScreen({
+    Key? key,
+    required this.gameMode,
+    required this.difficulty,
+    required this.languageCode, // Add this
+  }) : super(key: key);
 
   @override
   State<PlayerSetupScreen> createState() => _PlayerSetupScreenState();
@@ -40,11 +48,14 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
   }
 
   void _nextOrStartGame() {
-    if (_nameController.text.isEmpty || (selectedAvatar == null && customImage == null)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your name and select an avatar')),
-      );
-      return;
+  if (_nameController.text.isEmpty || (selectedAvatar == null && customImage == null)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(
+        AppLocalizations.of(context)?.selectAvatar ?? 'Please enter your name and select an avatar'
+      )),
+    );
+    return;
+
     }
 
     if (widget.gameMode == GameMode.versusPlayer && currentPlayer == 1) {
@@ -69,39 +80,54 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
             player1Name: player1Name ?? _nameController.text,
             player1AvatarPath: player1Avatar ?? (customImage?.path ?? selectedAvatar!),
             player2Name: widget.gameMode == GameMode.versusAI ? "AI" : player2Name,
-            player2AvatarPath: widget.gameMode == GameMode.versusAI
-                ? "assets/images/ai_avatar.png"
-                : player2Avatar,
+            player2AvatarPath: widget.gameMode == GameMode.versusAI ? "assets/images/ai_avatar.png" : player2Avatar,
+            //languageCode: 'en', // Add this for now, you'll need to pass it from HomeScreen later
+            languageCode: widget.languageCode, // Use the language passed from HomeScreen
+
+
           ),
         ),
       );
     }
   }
 
-  void _startAsGuest() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => GameScreen(
-          gameMode: widget.gameMode,
-          difficulty: widget.difficulty,
-          player1Name: 'Guest',
-          player1AvatarPath: 'assets/images/guest_avatar.png',
-          player2Name: widget.gameMode == GameMode.versusAI ? 'AI' : null,
-          player2AvatarPath: widget.gameMode == GameMode.versusAI ? 'assets/images/ai_avatar.png' : null,
-        ),
+void _startAsGuest() {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (_) => GameScreen(
+        gameMode: widget.gameMode,
+        difficulty: widget.difficulty,
+        player1Name: AppLocalizations.of(context)?.guest ?? 'Guest',
+        player1AvatarPath: 'assets/images/guest_avatar.png',
+      player2Name: widget.gameMode == GameMode.versusAI 
+    ? AppLocalizations.of(context)?.versusAI ?? 'AI' 
+    : null,
+        player2AvatarPath: widget.gameMode == GameMode.versusAI 
+            ? 'assets/images/ai_avatar.png' 
+            : null,
+        languageCode: widget.languageCode,
       ),
-    );
-  }
+    ),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  // Get current locale and determine if RTL
+  final currentLocale = Localizations.localeOf(context).languageCode;
+  final isRtl = currentLocale == 'ar';
+  
+  return Directionality(
+    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+    child: Scaffold(
       backgroundColor: Colors.teal.shade50,
       appBar: AppBar(
         title: Text(widget.gameMode == GameMode.versusPlayer
-            ? (currentPlayer == 1 ? 'Player 1 Setup' : 'Player 2 Setup')
-            : 'Player Setup'),
+            ? (currentPlayer == 1 
+                ? AppLocalizations.of(context)?.player1Setup ?? 'Player 1 Setup'
+                : AppLocalizations.of(context)?.player2Setup ?? 'Player 2 Setup')
+            : AppLocalizations.of(context)?.playerSetup ?? 'Player Setup'),
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
@@ -113,7 +139,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Enter your name',
+                  labelText: AppLocalizations.of(context)?.enterName ?? 'Enter your name',
                   labelStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: Colors.white,
@@ -133,7 +159,10 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('Choose Avatar:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                AppLocalizations.of(context)?.selectAvatar ?? 'Choose Avatar:', 
+                style: const TextStyle(fontWeight: FontWeight.bold)
+              ),
               const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -160,8 +189,8 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                   ),
                   child: Text(
                     (widget.gameMode == GameMode.versusPlayer && currentPlayer == 1)
-                        ? 'Next Player'
-                        : 'Start Game',
+                        ? AppLocalizations.of(context)?.nextPlayer ?? 'Next Player'
+                        : AppLocalizations.of(context)?.startGame ?? 'Start Game',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -183,19 +212,19 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Continue as Guest',
-                          style: TextStyle(
+                          AppLocalizations.of(context)?.continueAsGuest ?? 'Continue as Guest',
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.teal,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(Icons.person_outline, color: Colors.teal, size: 26),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.person_outline, color: Colors.teal, size: 26),
                       ],
                     ),
                   ),
@@ -204,8 +233,9 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildAvatarOption(String imagePath) {
     bool isSelected = selectedAvatar == imagePath;
