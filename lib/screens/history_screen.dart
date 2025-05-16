@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key? key}) : super(key: key);
+  const HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -52,21 +52,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final game = history[index];
                   return ListTile(
                     leading: const Icon(Icons.history),
-                    title: Text(
-                      AppLocalizations.of(context)?.historyVs(
-                            game['player1Name'],
-                            game['player2Name'] ?? AppLocalizations.of(context)?.versusAI ?? 'AI',
-                          ) ??
-                          '${game['player1Name']} vs ${game['player2Name'] ?? 'AI'}',
-                    ),
-                    subtitle: Text(
-                      AppLocalizations.of(context)?.historyScore(
-                            game['player1Score'].toString(),
-                            game['player2Score']?.toString() ?? '-',
-                            game['player1Words'].toString(),
-                          ) ??
-                          'Score: ${game['player1Score']} - ${game['player2Score'] ?? '-'} • Words: ${game['player1Words']}',
-                    ),
+                   title: Text(
+  '${game['player1Name']} vs ${game['player2Name'] ?? AppLocalizations.of(context)?.versusAI ?? 'AI'}',
+),
+
+subtitle: Text(
+  (AppLocalizations.of(context)?.historyScore as String? ?? 'Score: {score1} - {score2} • Words: {words}')
+    .replaceAll('{score1}', game['player1Score'].toString())
+    .replaceAll('{score2}', game['player2Score']?.toString() ?? '-')
+    .replaceAll('{words}', game['player1Words'].toString()),
+),
+
+
+
                     trailing: Text(
                       _getLocalizedDifficulty(context, game['difficulty']) ?? game['difficulty'],
                     ),

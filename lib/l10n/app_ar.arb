@@ -58,5 +58,9 @@
 "gameHistory": "سجل الألعاب",
 "noHistoryFound": "لا يوجد سجل.",
 "historyVs": "{player1} ضد {player2}",
-"historyScore": "النتيجة: {score1} - {score2} • كلمات: {words}"
+"historyScore": "النتيجة: {score1} - {score2} • كلمات: {words}",
+  "gameHistory": "سجل اللعب",
+  "noHistoryFound": "لا يوجد سجل.",
+  "historyVs": "{player1} ضد {player2}",
+  "historyScore": "النتيجة: {score}"
 }

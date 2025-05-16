@@ -23,7 +23,7 @@ class ResultScreen extends StatefulWidget {
   final Difficulty difficulty;
 
   const ResultScreen({
-    Key? key,
+    super.key,
     required this.player1Name,
     required this.player1AvatarPath,
     required this.player1Score,
@@ -34,7 +34,7 @@ class ResultScreen extends StatefulWidget {
     this.player2Words,
     required this.gameMode,
     required this.difficulty,
-  }) : super(key: key);
+  });
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();

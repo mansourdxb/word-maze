@@ -6,8 +6,9 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/game_mode.dart';
 import '../models/difficulty.dart';
-import '../data/word_lists.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:word_maze/data/word_lists.dart';
+
 
 class GameScreen extends StatefulWidget {
   final GameMode gameMode;
@@ -19,7 +20,7 @@ class GameScreen extends StatefulWidget {
   final String languageCode; // Added parameter
 
   const GameScreen({
-    Key? key,
+    super.key,
     required this.gameMode,
     required this.difficulty,
     required this.player1Name,
@@ -27,7 +28,7 @@ class GameScreen extends StatefulWidget {
     this.player2Name,
     this.player2AvatarPath,
     required this.languageCode, // Added parameter requirement
-  }) : super(key: key);
+  });
 
   @override
   State<GameScreen> createState() => _GameScreenState();

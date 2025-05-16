@@ -72,10 +72,10 @@
   "@selectAvatar": {
     "description": "Prompt to select avatar"
   },
-  "continueButton": "Continue", 
-"@continueButton": {
-  "description": "Continue button text"
-},
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button text"
+  },
   "timeLeft": "Time Left",
   "@timeLeft": {
     "description": "Time left label"
@@ -112,7 +112,7 @@
   "@arabic": {
     "description": "Arabic language name"
   },
-    "guest": "Guest",
+  "guest": "Guest",
   "@guest": {
     "description": "Guest player name"
   },
@@ -144,102 +144,94 @@
   "@player2Setup": {
     "description": "Player 2 setup screen title"
   },
-"easy": "Easy",
-"@easy": {
-  "description": "Easy difficulty"
-},
-"medium": "Medium",
-"@medium": {
-  "description": "Medium difficulty"
-},
-"hard": "Hard",
-"@hard": {
-  "description": "Hard difficulty"
-},
-"splashTagline": "Play against Friends & AI",
-"@splashTagline": {
-  "description": "Tagline on splash screen"
-},
-"won": "{name} Won!",
-"@won": {
-  "description": "Winner announcement with player name",
-  "placeholders": {
-    "name": {
-      "type": "String",
-      "example": "Player 1"
+  "splashTagline": "Play against Friends & AI",
+  "@splashTagline": {
+    "description": "Tagline on splash screen"
+  },
+  "won": "{name} Won!",
+  "@won": {
+    "description": "Winner announcement with player name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Player 1"
+      }
     }
-  }
-},
-"wordsSolved": "Words Solved: {count}",
-"@wordsSolved": {
-  "description": "Words solved counter",
-  "placeholders": {
-    "count": {
-      "type": "int",
-      "example": "5"
+  },
+  "wordsSolved": "Words Solved: {count}",
+  "@wordsSolved": {
+    "description": "Words solved counter",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
     }
-  }
-},
-"finalScore": "Final Score: {score} pts",
-"@finalScore": {
-  "description": "Final score display",
-  "placeholders": {
-    "score": {
-      "type": "int",
-      "example": "250"
+  },
+  "finalScore": "Final Score: {score} pts",
+  "@finalScore": {
+    "description": "Final score display",
+    "placeholders": {
+      "score": {
+        "type": "int",
+        "example": "250"
+      }
     }
-  }
-},
-"rematch": "Rematch",
-"@rematch": {
-  "description": "Rematch button text"
-},
-"winner": "Winner!",
-"@winner": {
-  "description": "Winner label"
-},
-"viewHistory": "View History",
-"@viewHistory": {
-  "description": "View history button"
-},
-"gameHistory": "Game History",
-"@gameHistory": {
-  "description": "Game history screen title"
-},
-"noHistoryFound": "No history found.",
-"@noHistoryFound": {
-  "description": "Text shown when history is empty"
-},
-"historyVs": "{player1} vs {player2}",
-"@historyVs": {
-  "description": "Game history entry title format",
-  "placeholders": {
-    "player1": {
-      "type": "String",
-      "example": "Player1"
-    },
-    "player2": {
-      "type": "String",
-      "example": "Player2"
+  },
+  "rematch": "Rematch",
+  "@rematch": {
+    "description": "Rematch button text"
+  },
+  "winner": "Winner!",
+  "@winner": {
+    "description": "Winner label"
+  },
+  "viewHistory": "View History",
+  "@viewHistory": {
+    "description": "View history button"
+  },
+  "gameHistory": "Game History",
+  "@gameHistory": {
+    "description": "Game history screen title"
+  },
+  "noHistoryFound": "No history found.",
+  "@noHistoryFound": {
+    "description": "Text shown when history is empty"
+  },
+  "historyVs": "{player1} vs {player2}",
+  "@historyVs": {
+    "description": "Game history entry title format",
+    "placeholders": {
+      "player1": {
+        "type": "String",
+        "example": "Player1"
+      },
+      "player2": {
+        "type": "String",
+        "example": "Player2"
+      }
     }
-  }
-},
-"historyScore": "Score: {score1} - {score2} • Words: {words}",
-"@historyScore": {
-  "description": "Game history entry score format",
-  "placeholders": {
-    "score1": {
-      "type": "String",
-      "example": "150"
-    },
-    "score2": {
-      "type": "String",
-      "example": "100"
-    },
-    "words": {
-      "type": "String",
-      "example": "5"
+  },
+  "historyScore": "Score: {score1} - {score2} • Words: {words}",
+  "@historyScore": {
+    "description": "Game history entry score format",
+    "placeholders": {
+      "score1": {
+        "type": "String",
+        "example": "150"
+      },
+      "score2": {
+        "type": "String",
+        "example": "100"
+      },
+      "words": {
+        "type": "String",
+        "example": "5"
+      }
     }
-  }
+  },
+  "historyTitle": "Game History",
+"@historyTitle": {
+  "description": "Title of the game history screen"
 }
 }

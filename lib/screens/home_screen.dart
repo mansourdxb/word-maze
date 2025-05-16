@@ -8,9 +8,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/locale_provider.dart';
+import '../services/word_list_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
+// Remove any import of WordListService from word_lists.dart if it exists
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -313,6 +317,8 @@ Widget _buildDifficultySelector() {
   );
 }
 
+
+
 Widget _buildLanguageSelector() {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -584,7 +590,154 @@ Widget build(BuildContext context) {
                       icon: Icons.language,
                       iconColor: const Color(0xFF3F51B5),
                     ),
-                    const SizedBox(height: 30),
+                    Padding(
+  padding: const EdgeInsets.symmetric(vertical: 10.0),
+ child: ElevatedButton.icon(
+  icon: const Icon(Icons.refresh),
+  label: const Text('Update Word Lists'),
+  onPressed: () async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Updating word lists...\nPlease wait'),
+          ],
+        ),
+      ),
+    );
+    
+    try {
+      // Try to refresh with a timeout
+      final success = await WordListService.forceRefresh()
+          .timeout(const Duration(seconds: 30));
+      
+      // Close loading indicator
+      if (context.mounted) Navigator.of(context).pop();
+      
+      // Show detailed result
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(success 
+              ? 'Word lists updated successfully!' 
+              : 'Failed to update word lists. Check your internet connection.'),
+            duration: const Duration(seconds: 3),
+            action: success ? null : SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                // Retry the refresh using the same logic - just copy it
+                // instead of using "this.onPressed!()"
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const AlertDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Updating word lists...\nPlease wait'),
+                      ],
+                    ),
+                  ),
+                );
+                
+                WordListService.forceRefresh()
+                  .timeout(const Duration(seconds: 30))
+                  .then((success) {
+                    // Close loading indicator
+                    if (context.mounted) Navigator.of(context).pop();
+                    
+                    // Show result
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success 
+                            ? 'Word lists updated successfully!' 
+                            : 'Failed to update word lists. Check your internet connection.'),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  })
+                  .catchError((e) {
+                    // Close loading indicator
+                    if (context.mounted) Navigator.of(context).pop();
+                    
+                    // Show error
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error: $e'),
+                          duration: const Duration(seconds: 5),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  });
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // Close loading indicator
+      if (context.mounted) Navigator.of(context).pop();
+      
+      // Show error
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  },
+),
+
+
+),
+
+const SizedBox(height: 15),
+TextButton(
+  child: const Text('Test Connection'),
+  onPressed: () async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://raw.githubusercontent.com/mansourdxb/Games-Data/main/test.json'),
+      );
+      
+      if (response.statusCode == 200) {
+        print('Test successful: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connection successful: ${response.body}')),
+        );
+      } else {
+        print('Test failed: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connection failed: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      print('Test error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  },
+),
+
+const SizedBox(height: 30), // This is the original spacing before "Start Game" button
+
                     Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(bottom: 30),

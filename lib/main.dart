@@ -20,7 +20,7 @@ void main() {
 }
 
 class WordMazeApp extends StatelessWidget {
-  const WordMazeApp({Key? key}) : super(key: key);
+  const WordMazeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
